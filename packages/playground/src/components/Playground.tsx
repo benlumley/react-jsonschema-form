@@ -7,6 +7,8 @@ import {
   RJSFSchema,
   RJSFValidationError,
   TemplatesType,
+  helpId,
+  FieldHelpProps,
   UiSchema,
   ValidatorType,
 } from '@rjsf/utils';
@@ -18,10 +20,26 @@ import ErrorBoundary from './ErrorBoundary';
 import GeoPosition from './GeoPosition';
 import { ThemesType } from './ThemeSelector';
 import Editors from './Editors';
+import Markdown from 'marked-react';
 
 export interface PlaygroundProps {
   themes: { [themeName: string]: ThemesType };
   validators: { [validatorName: string]: ValidatorType };
+}
+
+function FieldHelpTemplate<T = any, S extends StrictRJSFSchema = RJSFSchema, F extends FormContextType = any>(
+  props: FieldHelpProps<T, S, F>
+) {
+  const { idSchema, help } = props;
+  if (help === '') {
+    return null;
+  }
+  const id = helpId(idSchema);
+  return (
+    <aside id={id}>
+      <Markdown>{help}</Markdown>
+    </aside>
+  );
 }
 
 export default function Playground({ themes, validators }: PlaygroundProps) {
@@ -134,6 +152,8 @@ export default function Playground({ themes, validators }: PlaygroundProps) {
   if (ObjectFieldTemplate) {
     templates.ObjectFieldTemplate = ObjectFieldTemplate;
   }
+
+  templates.FieldHelpTemplate = FieldHelpTemplate;
 
   return (
     <>
